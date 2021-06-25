@@ -1,0 +1,6 @@
+.pio
+.vscode
+test
+include/Cert.h
+include/Config.h
+src/key
