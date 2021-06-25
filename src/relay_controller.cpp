@@ -13,6 +13,9 @@ void manualOverride();
 void setup();
 void loop();
 void manualOverride();
+void apModeCallback();
+void connectedCallback();
+void connectingCallback();
 
 StateManager stateManager;
 RelayManager relayManager;
@@ -24,56 +27,24 @@ unsigned long lastButtonPress = millis();
 
 void setup()
 {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(MANUAL_BUTTON_PIN, INPUT_PULLUP);
+
+  stateManager.registerStateFunction(CONNECTING, connectingCallback);
+  stateManager.registerStateFunction(CONNECTED, connectedCallback);
+  stateManager.registerStateFunction(AP_MODE, apModeCallback);
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-  switch (stateManager.getState())
-  {
-  case CONNECTING:
-    // Search for valid configuration and attempt connecting to the WiFi
-    if (configuration.isValid())
-    {
-      stateManager.setState(CONNECTED);
-    }
-    else
-    {
-      // Start AP
-      stateManager.setState(AP_MODE);
-    }
-    break;
-  case CONNECTED:
-    // Start the command server
-    if (connectToWlan())
-    {
-      // Start server
-      commandServer.startServer();
-    }
-    else
-    {
-      // Start AP
-      stateManager.setState(AP_MODE);
-    }
-
-    break;
-  case AP_MODE:
-    bool result = false;
-    while ((result = startAccessPoint()) == false)
-    {
-      manualOverride();
-      delay(150);
-    }
-    accessPoint.startServer();
-    break;
-  }
+  stateManager.executeState();
 }
 
 void manualOverride()
 {
+  // Check if a set time has passed since the last button press
+  // The timeout is necessary to avoid executing the action multiple times
+  // until the button is released
   if (millis() > lastButtonPress + BUTTON_DEBOUNCE_MS)
   {
     if (digitalRead(MANUAL_BUTTON_PIN) == MANUAL_BUTTON_PRESSED_STATE)
@@ -144,4 +115,44 @@ bool startAccessPoint()
   Serial.print(" and local IP: ");
   Serial.println(WiFi.softAPIP());
   return true;
+}
+
+void connectingCallback()
+{
+  // Search for valid configuration and attempt connecting to the WiFi
+  if (configuration.isValid())
+  {
+    stateManager.setState(CONNECTED);
+  }
+  else
+  {
+    // Start AP
+    stateManager.setState(AP_MODE);
+  }
+}
+
+void connectedCallback()
+{
+  // Start the command server
+  if (connectToWlan())
+  {
+    // Start server
+    commandServer.startServer();
+  }
+  else
+  {
+    // Start AP
+    stateManager.setState(AP_MODE);
+  }
+}
+
+void apModeCallback()
+{
+  bool result = false;
+  while ((result = startAccessPoint()) == false)
+  {
+    manualOverride();
+    delay(150);
+  }
+  accessPoint.startServer();
 }

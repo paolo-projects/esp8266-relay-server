@@ -8,6 +8,11 @@ RelayManager::RelayManager()
     digitalWrite(RELAY_PIN, RELAY_PIN_OFF);
 }
 
+/**
+ * @brief Change the relay state
+ * 
+ * @param state The new relay state
+ */
 void RelayManager::setState(RELAY_STATE state)
 {
     if (CurrentState != state)
@@ -26,6 +31,11 @@ void RelayManager::setState(RELAY_STATE state)
     }
 }
 
+/**
+ * @brief Gets the current relay state
+ * 
+ * @return RELAY_STATE 
+ */
 RELAY_STATE RelayManager::getState() const
 {
     return CurrentState;
