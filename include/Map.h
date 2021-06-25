@@ -1,3 +1,5 @@
+#include <functional>
+
 /**
  * @brief A static (bad) implementation of a map/dictionary
  * 
@@ -5,7 +7,7 @@
  * @tparam E The type of the values
  * @tparam S The pre-allocated max-number of elements the map is allowed to have. Defaults to 24 to spare device memory.
  */
-template <typename T, typename E, int S = 24>
+template <typename T, typename E, int S = 24, class equals = std::equal_to<T>>
 class Map
 {
 public:
@@ -27,6 +29,7 @@ public:
         {
             keys[cursor] = key;
             values[cursor] = value;
+            size++;
             cursor++;
         }
         else
@@ -131,7 +134,9 @@ private:
         }
     }
     /**
-     * @brief Returns the internal index of a given key
+     * @brief Returns the internal index of a given key.
+     * The comparison is either done based on the == operator of E
+     * or equals can be specified as a custom equality comparator
      * 
      * @param key The key to find
      * @return int The index
@@ -141,7 +146,7 @@ private:
     {
         for (int i = 0; i < size; i++)
         {
-            if (keys[i] == key)
+            if (equals()(keys[i], key))
             {
                 return i;
             }
