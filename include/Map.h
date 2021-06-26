@@ -28,17 +28,25 @@ public:
     bool put(const T &key, const E &value)
     {
         int vindex = indexOf(key);
-        if (vindex < 0 && size < S)
+        if (vindex < 0)
         {
-            keys[cursor] = key;
-            values[cursor] = value;
-            size++;
-            cursor++;
+            if (size < S)
+            {
+                keys[cursor] = key;
+                values[cursor] = value;
+                size++;
+                cursor++;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
             values[vindex] = value;
         }
+        return true;
     }
     /**
      * @brief Gets the value by the given key
