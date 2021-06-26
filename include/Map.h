@@ -1,11 +1,12 @@
 #include <functional>
 
 /**
- * @brief A static (bad) implementation of a map/dictionary
+ * @brief A (bad) fixed-size implementation of a map/dictionary
  * 
  * @tparam T The type of the keys
  * @tparam E The type of the values
  * @tparam S The pre-allocated max-number of elements the map is allowed to have. Defaults to 24 to spare device memory.
+ * @tparam equals The functor class used for equalness check. It defaults to using the == operator
  */
 template <typename T, typename E, int S = 24, class equals = std::equal_to<T>>
 class Map
@@ -21,11 +22,13 @@ public:
      * 
      * @param key The key
      * @param value The value
+     * @return true if the operation succeeded
+     * @return false if the operation failed because the map has no more room
      */
-    void put(const T &key, const E &value)
+    bool put(const T &key, const E &value)
     {
         int vindex = indexOf(key);
-        if (vindex < 0)
+        if (vindex < 0 && size < S)
         {
             keys[cursor] = key;
             values[cursor] = value;
@@ -136,7 +139,7 @@ private:
     /**
      * @brief Returns the internal index of a given key.
      * The comparison is either done based on the == operator of E
-     * or equals can be specified as a custom equality comparator
+     * or equals can be specified as a custom equalness comparator
      * 
      * @param key The key to find
      * @return int The index
