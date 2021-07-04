@@ -37,8 +37,8 @@
 // The AP server port
 #define AP_SERVER_PORT 5597
 // The AP server authentication
-#define AUTH_USER <THE AP MODE USERNAME HERE>
-#define AUTH_PASS <THE AP MODE PASSWORD HERE>
+#define AP_AUTH_USER <THE AP MODE USERNAME HERE>
+#define AP_AUTH_PASS <THE AP MODE PASSWORD HERE>
 #define TIMEOUT 3000
 
 // Main server
@@ -48,6 +48,15 @@
 #define UDP_BROADCAST_PORT 5589
 // The UDP broadcast rate in milliseconds
 #define UDP_BROADCAST_RATE 2000
+// The packet broadcasted through UDP to notify clients of the server being available
+// You can put any kind of data here, a string, random bytes, and the client should identify
+// the server from this packet
+#define UDP_BROADCAST_PACKET                                                                    \
+    {                                                                                           \
+        0x0d, 0x2e, 0x82, 0xdf, 0xfd, 0xf7, 0x4f, 0x4a, 0x0d, 0x6d, 0xd8, 0x8a, 0xc1, 0xb2,     \
+            0x8c, 0x9e, 0x4c, 0x28, 0x84, 0xa3, 0x19, 0x18, 0x58, 0xc9, 0xcd, 0x91, 0x98, 0x58, \
+            0xc2, 0xdc, 0x45, 0xc4                                                              \
+    }
 
 // The main server authentication
 #define AUTHENTICATION_USERNAME <THE CLIENT MODE USERNAME HERE>

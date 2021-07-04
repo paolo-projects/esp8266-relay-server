@@ -4,32 +4,33 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 //#include <ESP8266WebServer.h>
+#include "AuthenticationHandler.h"
+#include "Cert.h"
+#include "Config.h"
 #include "Configuration.h"
 #include "StateManager.h"
-#include "Cert.h"
-#include "PacketParser.h"
-#include "Config.h"
-
-/*
- * Format:
- * PI<length of username: uint8_t><length of pass: uint8_t><AUTH USER><AUTH PASS>
- * then
- * PI<length of ssid: uint8_t><length of wifi pass: uint8_t><SSID><WIFI PASS>
- * 
- * responses:
- * PIOK
- */
+#include "ActionParser.h"
+#include "SerialMap.h"
+#include "Common.h"
 
 class AccessPointOperations
 {
 public:
-  AccessPointOperations(Configuration &configuration, StateManager &stateManager, std::function<void(void)> manualOverride);
+  AccessPointOperations(Configuration &configuration,
+                        StateManager &stateManager,
+                        std::function<void(void)> manualOverride);
   void startServer();
 
 private:
   Configuration &configuration;
   StateManager &stateManager;
   std::function<void(void)> manualOverride;
+  AuthenticationHandler authHandler;
+  ActionParser<10> actionParser;
+
+  bool serverRunning = true;
+
+  void setWifiPassword(SerialMap<10> &action, Stream &output);
 };
 
 #endif
