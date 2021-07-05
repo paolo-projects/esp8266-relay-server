@@ -31,9 +31,9 @@ private:
   ActionParser<10> actionParser;
   //bool authHandler(BearSSL::WiFiClientSecure &client);
   void udpBroadcast();
-  void shutDown(SerialMap<10> &action, Stream &output);
-  void getState(SerialMap<10> &action, Stream &output);
-  void setState(SerialMap<10> &action, Stream &output);
+  void shutDown(ActionMap &action, Stream &output);
+  void getState(ActionMap &action, Stream &output);
+  void setState(ActionMap &action, Stream &output);
 
   unsigned long lastUdpBroadcast = 0;
   WiFiUDP udp;

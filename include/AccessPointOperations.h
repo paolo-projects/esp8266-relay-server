@@ -30,7 +30,7 @@ private:
 
   bool serverRunning = true;
 
-  void setWifiPassword(SerialMap<10> &action, Stream &output);
+  void setWifiPassword(ActionMap &action, Stream &output);
 };
 
 #endif

@@ -3,27 +3,28 @@
 
 #include "SerialMap.h"
 #include "RelayManager.h"
+#include "Common.h"
 
 class Response
 {
 public:
-    static SerialMap<1> successResponse()
+    static ResponseMap successResponse()
     {
-        SerialMap<1> response;
+        ResponseMap response;
         response.put("result", "ok");
         return response;
     }
 
-    static SerialMap<1> errorResponse()
+    static ResponseMap errorResponse()
     {
-        SerialMap<1> response;
+        ResponseMap response;
         response.put("result", "error");
         return response;
     }
 
-    static SerialMap<1> statusResponse(RELAY_STATE state)
+    static ResponseMap statusResponse(RELAY_STATE state)
     {
-        SerialMap<1> response;
+        ResponseMap response;
         response.put("state", state == RELAY_ON ? "on" : "off");
         return response;
     }

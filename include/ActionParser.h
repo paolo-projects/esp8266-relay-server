@@ -3,6 +3,7 @@
 
 #include "Map.h"
 #include "SerialMap.h"
+#include "Common.h"
 #include <functional>
 #include <string>
 
@@ -18,18 +19,18 @@ class ActionParser
 public:
 	ActionParser() = default;
 	ActionParser &with(String &action,
-					   std::function<void(SerialMap<10> &, Stream &)> callback)
+					   std::function<void(ActionMap &, Stream &)> callback)
 	{
 		actions.put(action, callback);
 		return *this;
 	}
 	ActionParser &with(const char *action,
-					   std::function<void(SerialMap<10> &, Stream &)> callback)
+					   std::function<void(ActionMap &, Stream &)> callback)
 	{
 		actions.put(String(action), callback);
 		return *this;
 	}
-	bool execute(SerialMap<10> &data, Stream &output)
+	bool execute(ActionMap &data, Stream &output)
 	{
 		if (data.has("action"))
 		{
@@ -47,7 +48,7 @@ public:
 	}
 
 private:
-	Map<String, std::function<void(SerialMap<10> &, Stream &)>, N> actions;
+	Map<String, std::function<void(ActionMap &, Stream &)>, N> actions;
 };
 
 #endif

@@ -13,7 +13,7 @@ bool AuthenticationHandler::authenticate(Stream &client)
 	auto data = std::unique_ptr<char[]>(new char[1024]);
 	size_t read = client.readBytes(data.get(), 1024);
 
-	SerialMap<10> authentication(data.get(), read);
+	ActionMap authentication(data.get(), read);
 
 	if (authentication.has("username") &&
 		authentication.has("password"))

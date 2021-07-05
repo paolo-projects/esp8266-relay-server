@@ -62,7 +62,7 @@ void AccessPointOperations::startServer()
                     // Read control characters PI
                     int read_data = incoming.readBytes((uint8_t *)(buffer.get()), 1024);
 
-                    SerialMap<10> action(buffer.get(), read_data);
+                    ActionMap action(buffer.get(), read_data);
 
                     actionParser.execute(action, incoming);
                 }
@@ -82,7 +82,7 @@ void AccessPointOperations::startServer()
     server.stop();
 }
 
-void AccessPointOperations::setWifiPassword(SerialMap<10> &action, Stream &output)
+void AccessPointOperations::setWifiPassword(ActionMap &action, Stream &output)
 {
     if (action.has("bssid") && action.has("password"))
     {

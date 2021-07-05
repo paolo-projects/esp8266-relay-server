@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include "Config.h"
 #include "SerialMap.h"
+#include "Common.h"
 
 class AuthenticationHandler
 {

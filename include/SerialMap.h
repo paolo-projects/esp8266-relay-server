@@ -2,16 +2,19 @@
 #define BUFFER_PARSER_H
 
 #include <sstream>
-#include "Arduino.h"
 #include "Map.h"
+#include "Serializable.h"
 
 /**
  * @brief A serializable map based on the existing implementation with String support
  * 
+ * @tparam T The data type used for keys and valued. Generally it has to be a string-like type, such as std::string,
+ *  otherwise the provided type must implement a constructor that accepts a null terminated char array, a << stream operator to std::io_stream types
+ *  and a length() method
  * @tparam S The maximum size of the map in number of elements
  */
-template <int S = 24>
-class SerialMap : public Map<String, String, S>
+template <typename T = std::string, int S = 24>
+class SerialMap : public Map<T, T, S>, public Serializable
 {
 public:
     SerialMap() = default;
@@ -36,7 +39,8 @@ public:
 
             unsigned char length = sst.get();
             sst.read(buf, length);
-            String key(buf);
+            buf[length] = 0;
+            T key(buf);
 
             if (!sst.good() || sst.get() != VALUE_TYPE)
             {
@@ -45,9 +49,10 @@ public:
 
             length = sst.get();
             sst.read(buf, length);
-            String value(buf);
+            buf[length] = 0;
+            T value(buf);
 
-            Map<String, String, S>::put(key, value);
+            Map<T, T, S>::put(key, value);
         }
     }
 
@@ -58,12 +63,12 @@ public:
      * @param len The size of the output data buffer
      * @return size_t The size of the data written into the buffer, or -1 if it failed
      */
-    size_t serialize(char *data, size_t len)
+    size_t serialize(char *data, size_t len) const override
     {
         size_t expectedSize = 0;
-        for (auto it = Map<String, String, S>::begin(); it != Map<String, String, S>::end(); it++)
+        for (int i = 0; i < Map<T, T, S>::size; i++)
         {
-            expectedSize += (*it).key().length() + (*it).value().length() + 4;
+            expectedSize += Map<T, T, S>::keys[i].length() + Map<T, T, S>::values[i].length() + 4;
         }
 
         if (expectedSize > len)
@@ -72,10 +77,10 @@ public:
         }
 
         std::stringstream sst;
-        for (auto it = Map<String, String, S>::begin(); it != Map<String, String, S>::end(); it++)
+        for (int i = 0; i < Map<T, T, S>::size; i++)
         {
-            const String &key = (*it).key();
-            const String &value = (*it).value();
+            const String &key = Map<T, T, S>::keys[i];
+            const String &value = Map<T, T, S>::values[i];
 
             sst.put(KEY_TYPE);
             sst.put(key.length());

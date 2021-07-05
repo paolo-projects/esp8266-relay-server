@@ -54,7 +54,7 @@ void CommandServer::startServer()
                 std::unique_ptr<char[]> buffer(new char[1024]);
 
                 read_data = client.readBytes(buffer.get(), 1024);
-                SerialMap<10> action(buffer.get(), read_data);
+                ActionMap action(buffer.get(), read_data);
                 actionParser.execute(action, client);
             }
             else
@@ -81,7 +81,7 @@ void CommandServer::udpBroadcast()
     }
 }
 
-void CommandServer::shutDown(SerialMap<10> &action, Stream &output)
+void CommandServer::shutDown(ActionMap &action, Stream &output)
 {
 
     Serial.println("Requested connection shutdown, switching to AP mode");
@@ -95,7 +95,7 @@ void CommandServer::shutDown(SerialMap<10> &action, Stream &output)
     serverRunning = false;
 }
 
-void CommandServer::getState(SerialMap<10> &action, Stream &output)
+void CommandServer::getState(ActionMap &action, Stream &output)
 {
     // Get state
     Serial.println("Requested relay state");
@@ -109,7 +109,7 @@ void CommandServer::getState(SerialMap<10> &action, Stream &output)
     output.write((uint8_t *)outBuffer, len);
 }
 
-void CommandServer::setState(SerialMap<10> &action, Stream &output)
+void CommandServer::setState(ActionMap &action, Stream &output)
 {
     if (action.has("state"))
     {

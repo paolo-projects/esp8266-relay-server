@@ -173,10 +173,12 @@ public:
 		return iterator(*this, size);
 	}
 
-private:
+protected:
 	T keys[S];
 	E values[S];
 	int size = 0;
+
+private:
 	int cursor = 0;
 
 	/**
