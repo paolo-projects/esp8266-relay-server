@@ -27,18 +27,6 @@ void CommandServer::startServer()
     broadcastIp = WiFi.localIP();
     broadcastIp[3] = 255;
 
-    /*
-    Command -> unsigned 8 bit, one of:
-      - 0x00 -> disconnect
-      - 0x01 -> get state (on (0x01), off (0x00))
-      - 0x02 -> set state (on (0x01), off (0x00))
-  */
-    /*
-    Set value -> unsigned 8 bit:
-      If command is 0x02, this byte set to ON if 0x01,
-      to OFF if 0x00
-  */
-
     while (serverRunning)
     {
         auto client = server.available();
