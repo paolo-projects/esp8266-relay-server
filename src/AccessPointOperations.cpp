@@ -47,22 +47,12 @@ void AccessPointOperations::startServer()
             {
                 if (authHandler.authenticate(incoming))
                 {
-                    std::unique_ptr<char[]> buffer = std::unique_ptr<char[]>(new char[1024]);
-
-                    // Authentication ok
-                    Serial.println("Authentication OK");
-                    incoming.write((const uint8_t *)"PIOK", 4);
-                    incoming.flush();
-
                     // Wait for new transmission
                     timeout = millis();
                     while (!incoming.available() && millis() - timeout < TIMEOUT)
                         delay(50);
 
-                    // Read control characters PI
-                    int read_data = incoming.readBytes((uint8_t *)(buffer.get()), 1024);
-
-                    ActionMap action(buffer.get(), read_data);
+                    ActionMap action = ActionMap::fromStream(incoming, TIMEOUT);
 
                     actionParser.execute(action, incoming);
                 }

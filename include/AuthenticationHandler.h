@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include "Config.h"
 #include "SerialMap.h"
+#include "Response.h"
 #include "Common.h"
 
 class AuthenticationHandler
@@ -18,6 +19,7 @@ public:
 
 private:
   String username, password;
+  char buffer[1024];
 };
 
 #endif

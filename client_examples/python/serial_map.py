@@ -1,15 +1,16 @@
 import io
 import json
+from typing import Dict
 
 KEY_TYPE = b'\x10'
 VALUE_TYPE = b'\x11'
 
 
 class SerialMap:
-    data: dict
+    data: Dict[str, str]
 
-    def __init__(self, data: bytes = None):
-        self.data = {}
+    def __init__(self, data: bytes = None, values: Dict[str, str] = None):
+        self.data = values or {}
 
         if data is not None:
             buff = io.BytesIO(data)
@@ -48,17 +49,21 @@ class SerialMap:
             result.write(len(value).to_bytes(1, "big", signed=False))
             result.write(bytes(value, "utf8"))
 
+        result.write(b'\0')
+
         return result.getvalue()
 
+    def __getitem__(self, key: str) -> str:
+        return self.data[key]
 
-def test():
-    map = SerialMap()
+    def __setitem__(self, key: str, value: str) -> str:
+        self.data[key] = value
 
-    map.put("the key", "the value")
-    print("Dictionary:", json.dumps(map.data))
-    print("Serialized:", map.serialize())
+    def __delitem__(self, key: str):
+        del self.data[key]
 
-    map2 = SerialMap(
-        b'\x10\x05hello\x11\x05world\x10\x07another\x11\x05value')
-    print("Serialized:", b'\x10\x05hello\x11\x05world\x10\x07another\x11\x05value')
-    print("Dictionary:", json.dumps(map2.data))
+    def __contains__(self, key: str):
+        return key in self.data
+
+    def __str__(self) -> str:
+        return json.dumps(self.data)

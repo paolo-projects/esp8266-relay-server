@@ -6,7 +6,8 @@
 int main(int argc, char **argv)
 {
     /* 
-        create the socket with SSL and open the connection
+        create the socket with SSL and open the connection the C way
+        or use an external library such as boost
     */
 
     // ...
@@ -20,13 +21,12 @@ int main(int argc, char **argv)
     int sz = authentication.serialize(payload, 256);
 
     /*
-        write authentication
-        _socket.write(payload, sz);
+        SSL_write(socket, payload, sz);
 
         ...
 
         read result
-        sz = _socket.read(payload, 256);
+        sz = SSL_read(socket, payload, 256);
     */
 
     SerialMap<std::string, 1> response(payload, sz);
@@ -40,7 +40,6 @@ int main(int argc, char **argv)
     int sz = request.serialize(payload, 256);
 
     /*
-        write the data to the socket
-        _socket.write(payload, sz); 
+        SSL_write(socket, payload, sz);
     */
 }

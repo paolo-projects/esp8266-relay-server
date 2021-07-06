@@ -24,11 +24,11 @@ public:
 			: parent(parent), index(index)
 		{
 		}
-		const T &key()
+		T &key() const
 		{
 			return parent.keys[index];
 		}
-		const E &value()
+		E &value() const
 		{
 			return parent.values[index];
 		}
@@ -50,11 +50,11 @@ public:
 		{
 			return MapEntry(parent, index);
 		}
-		bool operator==(const iterator &rhs)
+		bool operator==(const iterator &rhs) const
 		{
 			return index == rhs.index;
 		}
-		bool operator!=(const iterator &rhs)
+		bool operator!=(const iterator &rhs) const
 		{
 			return index != rhs.index;
 		}
@@ -66,8 +66,6 @@ public:
 		Map<T, E, S, equals> &parent;
 		int index = 0;
 	};
-
-	typedef const iterator const_iterator;
 
 	/**
 	 * @brief Construct a new Map object
@@ -161,6 +159,15 @@ public:
 	const E *operator[](const T &key) const
 	{
 		return get(key);
+	}
+	/**
+	 * @brief Get the map size
+	 * 
+	 * @return int The map size
+	 */
+	int getSize() const
+	{
+		return size;
 	}
 
 	iterator begin()

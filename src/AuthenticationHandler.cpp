@@ -10,16 +10,16 @@ AuthenticationHandler::AuthenticationHandler(const char *username,
 
 bool AuthenticationHandler::authenticate(Stream &client)
 {
-	auto data = std::unique_ptr<char[]>(new char[1024]);
-	size_t read = client.readBytes(data.get(), 1024);
-
-	ActionMap authentication(data.get(), read);
+	ActionMap authentication = ActionMap::fromStream(client, TIMEOUT);
 
 	if (authentication.has("username") &&
 		authentication.has("password"))
 	{
+		Response::successResponse().write(client);
+
 		return *authentication.get("username") == this->username && *authentication.get("password") == this->password;
 	}
 
+	Response::errorResponse().write(client);
 	return false;
 }

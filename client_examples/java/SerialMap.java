@@ -1,17 +1,59 @@
 package client_examples.java;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-class SerialMap {
-    private static final byte KEY_TYPE = 0x10;
-    private static final byte VALUE_TYPE = 0x11;
+public class SerialMap {
+    private static final byte KEY_TYPE = '\u0010';
+    private static final byte VALUE_TYPE = '\u0011';
 
-    private HashMap<String, String> data = new HashMap<>();
+    private Map<String, String> data = new LinkedHashMap<>();
 
     public SerialMap() {
+    }
+
+    public SerialMap(InputStream input) throws IOException {
+        DataInputStream dataIs = new DataInputStream(input);
+
+        while (true) {
+            try {
+                byte b = dataIs.readByte();
+                if (b == '\0') {
+                    break;
+                }
+                if (b != KEY_TYPE) {
+                    break;
+                }
+
+                int l = dataIs.readUnsignedByte();
+                byte[] buffer = new byte[l];
+                dataIs.readFully(buffer);
+
+                String key = new String(buffer, StandardCharsets.UTF_8);
+
+                b = dataIs.readByte();
+                if (b != VALUE_TYPE) {
+                    break;
+                }
+
+                l = dataIs.readUnsignedByte();
+                buffer = new byte[l];
+                dataIs.readFully(buffer);
+                String value = new String(buffer, StandardCharsets.UTF_8);
+
+                data.put(key, value);
+            } catch (EOFException e) {
+                break;
+            }
+        }
     }
 
     public SerialMap(byte[] payload) {
@@ -59,19 +101,49 @@ class SerialMap {
             size += entry.getKey().length() + entry.getValue().length() + 4;
         }
 
-        byte[] result = new byte[size];
-        ByteBuffer out = ByteBuffer.wrap(result);
+        ByteBuffer out = ByteBuffer.allocate(size);
 
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            out.put(KEY_TYPE);
-            out.put((byte) entry.getKey().length());
-            out.put(entry.getKey().getBytes(StandardCharsets.UTF_8));
-
-            out.put(VALUE_TYPE);
-            out.put((byte) entry.getValue().length());
-            out.put(entry.getValue().getBytes(StandardCharsets.UTF_8));
+            out.put(KEY_TYPE).put((byte) entry.getKey().length()).put(entry.getKey().getBytes(StandardCharsets.UTF_8))
+                    .put(VALUE_TYPE).put((byte) entry.getValue().length())
+                    .put(entry.getValue().getBytes(StandardCharsets.UTF_8));
         }
 
-        return result;
+        return out.array();
+    }
+
+    public void write(OutputStream output) throws IOException {
+        write(output, false);
+    }
+
+    public void write(OutputStream output, boolean flush) throws IOException {
+        DataOutputStream dOs = new DataOutputStream(output);
+
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            dOs.write(KEY_TYPE);
+            dOs.write((byte) entry.getKey().length());
+            dOs.write(entry.getKey().getBytes(StandardCharsets.UTF_8));
+            dOs.write(VALUE_TYPE);
+            dOs.write((byte) entry.getValue().length());
+            dOs.write(entry.getValue().getBytes(StandardCharsets.UTF_8));
+        }
+
+        dOs.write('\0');
+
+        if (flush) {
+            output.flush();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[ ");
+        for (Map.Entry<String, String> e : data.entrySet()) {
+            sb.append("\"").append(e.getKey()).append("\"").append(" => ").append("\"").append(e.getValue())
+                    .append("\", ");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }

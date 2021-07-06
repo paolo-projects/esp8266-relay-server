@@ -30,7 +30,6 @@ void CommandServer::startServer()
     while (serverRunning)
     {
         auto client = server.available();
-        size_t read_data;
 
         if (client)
         {
@@ -39,10 +38,7 @@ void CommandServer::startServer()
 
             if (authHandler.authenticate(client))
             {
-                std::unique_ptr<char[]> buffer(new char[1024]);
-
-                read_data = client.readBytes(buffer.get(), 1024);
-                ActionMap action(buffer.get(), read_data);
+                ActionMap action = ActionMap::fromStream(client, TIMEOUT);
                 actionParser.execute(action, client);
             }
             else
@@ -63,7 +59,7 @@ void CommandServer::udpBroadcast()
     if (lastUdpBroadcast == 0 || millis() > lastUdpBroadcast + UDP_BROADCAST_RATE)
     {
         udp.beginPacket(broadcastIp, UDP_BROADCAST_PORT);
-        udp.write(CommandServer::UDPBcastPacket, 32);
+        udp.write(CommandServer::UDPBcastPacket, sizeof(CommandServer::UDPBcastPacket));
         udp.endPacket();
         lastUdpBroadcast = millis();
     }
@@ -74,10 +70,7 @@ void CommandServer::shutDown(ActionMap &action, Stream &output)
 
     Serial.println("Requested connection shutdown, switching to AP mode");
 
-    auto relayState = Response::successResponse();
-    size_t len = relayState.serialize(outBuffer, 512);
-
-    output.write((uint8_t *)outBuffer, len);
+    Response::successResponse().write(output);
 
     stateManager.setState(AP_MODE);
     serverRunning = false;
@@ -89,12 +82,9 @@ void CommandServer::getState(ActionMap &action, Stream &output)
     Serial.println("Requested relay state");
     RELAY_STATE state = relayManager.getState();
     Serial.print("Sending relay state: ");
-    Serial.println(state == RELAY_ON ? "ON" : "OFF");
+    Serial.println(state == RELAY_ON ? "on" : "off");
 
-    auto relayState = Response::statusResponse(state);
-    size_t len = relayState.serialize(outBuffer, 512);
-
-    output.write((uint8_t *)outBuffer, len);
+    Response::statusResponse(state).write(output);
 }
 
 void CommandServer::setState(ActionMap &action, Stream &output)
@@ -116,9 +106,6 @@ void CommandServer::setState(ActionMap &action, Stream &output)
             relayManager.setState(RELAY_ON);
         }
 
-        auto relayState = Response::successResponse();
-        size_t len = relayState.serialize(outBuffer, 512);
-
-        output.write((uint8_t *)outBuffer, len);
+        Response::successResponse().write(output);
     }
 }

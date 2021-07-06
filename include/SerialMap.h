@@ -1,6 +1,12 @@
 #ifndef BUFFER_PARSER_H
 #define BUFFER_PARSER_H
 
+#ifndef _TEST_ENV
+#include <Arduino.h>
+#else
+#include "test/mocks.h"
+#endif
+
 #include <sstream>
 #include "Map.h"
 #include "Serializable.h"
@@ -18,6 +24,56 @@ class SerialMap : public Map<T, T, S>, public Serializable
 {
 public:
     SerialMap() = default;
+    /**
+     * @brief Construct a new Serial Map object read from a Stream
+     * 
+     * @param stream The stream
+     * @param timeout The timeout 
+     * @return The Serial Map
+     */
+    static SerialMap fromStream(Stream &stream, int timeout)
+    {
+        int bufSz = 1024;
+        int read = 0;
+        char *buffer = (char *)malloc(bufSz);
+
+        unsigned long start = millis();
+
+        while (stream.available() <= 0 && millis() < start + timeout)
+            delay(20);
+
+        while (stream.available() > 0)
+        {
+            int r = stream.readBytesUntil('\0', buffer, bufSz);
+            read += r;
+
+            if (read != bufSz)
+            {
+                break;
+            }
+
+            if (read >= bufSz)
+            {
+                if (bufSz >= BUFFER_LIMIT)
+                {
+                    break;
+                }
+                bufSz += 1024;
+                buffer = (char *)realloc(buffer, bufSz);
+            }
+        }
+
+        Serial.print("Buffer size: ");
+        Serial.print(bufSz);
+        Serial.print(" Read chars: ");
+        Serial.println(read);
+
+        SerialMap result(buffer, read);
+
+        free(buffer);
+
+        return result;
+    }
     /**
      * @brief Construct a new Serial Map object from the raw data
      * 
@@ -54,6 +110,14 @@ public:
 
             Map<T, T, S>::put(key, value);
         }
+
+        Serial.print("Keys: [ ");
+        for (int i = 0; i < Map<T, T, S>::size; i++)
+        {
+            Serial.print(Map<T, T, S>::keys[i]);
+            Serial.print(", ");
+        }
+        Serial.println(" ]");
     }
 
     /**
@@ -65,7 +129,7 @@ public:
      */
     size_t serialize(char *data, size_t len) const override
     {
-        size_t expectedSize = 0;
+        size_t expectedSize = 1;
         for (int i = 0; i < Map<T, T, S>::size; i++)
         {
             expectedSize += Map<T, T, S>::keys[i].length() + Map<T, T, S>::values[i].length() + 4;
@@ -79,26 +143,48 @@ public:
         std::stringstream sst;
         for (int i = 0; i < Map<T, T, S>::size; i++)
         {
-            const String &key = Map<T, T, S>::keys[i];
-            const String &value = Map<T, T, S>::values[i];
+            const T &key = Map<T, T, S>::keys[i];
+            const T &value = Map<T, T, S>::values[i];
 
             sst.put(KEY_TYPE);
             sst.put(key.length());
-            sst << key;
+            sst << key.c_str();
 
             sst.put(VALUE_TYPE);
             sst.put(value.length());
-            sst << value;
+            sst << value.c_str();
         }
+
+        sst << '\0';
 
         sst.read(data, expectedSize);
 
         return expectedSize;
     }
 
+    /**
+     * @brief Writes the serialized map directly to the Stream
+     * 
+     * @param stream The stream
+     */
+    void write(Stream &stream)
+    {
+        for (auto it = Map<T, T, S>::begin(); it != Map<T, T, S>::end(); it++)
+        {
+            stream.write(KEY_TYPE);
+            stream.write(static_cast<unsigned char>((*it).key().length()));
+            stream.write((*it).key().c_str());
+            stream.write(VALUE_TYPE);
+            stream.write(static_cast<unsigned char>((*it).value().length()));
+            stream.write((*it).value().c_str());
+        }
+        stream.write('\0');
+    }
+
 private:
     static constexpr char KEY_TYPE = 0x10;
     static constexpr char VALUE_TYPE = 0x11;
+    static constexpr int BUFFER_LIMIT = 1024 * 10; //10kB
 };
 
 #endif

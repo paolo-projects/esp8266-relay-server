@@ -1,7 +1,7 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-#include "colors.h"
+#include "test/colors.h"
 
 #define TEST_CASE(x) \
     std::cout << CYAN("Testing: ") << YELLOW(x) << std::endl;
