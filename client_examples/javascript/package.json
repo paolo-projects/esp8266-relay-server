@@ -1,0 +1,20 @@
+{
+  "name": "client-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js get",
+    "get": "node index.js get",
+    "on": "node index.js set on",
+    "off": "node index.js set off",
+    "reset": "node index.js reset",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paolo Infante <info@paoloinfante.it> (https://paoloinfante.it)",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "yargs": "^17.0.1"
+  }
+}

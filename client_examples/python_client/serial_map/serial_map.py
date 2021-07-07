@@ -67,3 +67,6 @@ class SerialMap:
 
     def __str__(self) -> str:
         return json.dumps(self.data)
+
+    def __bytes__(self) -> bytes:
+        return self.serialize()

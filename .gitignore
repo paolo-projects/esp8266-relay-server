@@ -3,3 +3,8 @@
 include/Cert.h
 include/Config.h
 src/key
+.env
+.cert.pem
+Config.java
+__pycache__
+node_modules

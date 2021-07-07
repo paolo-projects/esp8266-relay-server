@@ -1,33 +1,54 @@
-#define _TEST_ENV
-
-//#include "tests.h"
-#include <unity.h>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <random>
-#include "SerialMap.h"
-#include "Map.h"
-#include "test/mocks.h"
-
-void test_serialization_deserialization();
-void test_stream_read_write();
-void test_map();
-void test_errors();
-void fillWithRandom(char *buffer, size_t size);
+#include "test/test.h"
 
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
 
+    RUN_TEST(test_map);
     RUN_TEST(test_serialization_deserialization);
     RUN_TEST(test_stream_read_write);
-    RUN_TEST(test_map);
     RUN_TEST(test_errors);
 
     UNITY_END();
 
     return 0;
+}
+void test_map()
+{
+    Map<int, std::string, 3> map;
+
+    ////TEST_CASE("Should succeed setting the entries when below the size limit");
+
+    TEST_ASSERT(map.put(45, "45"));
+    TEST_ASSERT(map.put(69, "69"));
+    TEST_ASSERT(map.put(90, "90"));
+
+    ////TEST_CASE("Map should contain the saved entries");
+
+    TEST_ASSERT(map.has(45));
+    TEST_ASSERT(map.has(69));
+    TEST_ASSERT(map.has(90));
+
+    ////TEST_CASE("Map should not contain other random stuff")
+
+    TEST_ASSERT(!map.has(666));
+    TEST_ASSERT(!map.has(123));
+    TEST_ASSERT(!map.has(6969));
+
+    ////TEST_CASE("Map values should match the ones set previously");
+
+    TEST_ASSERT(*map.get(45) == "45");
+    TEST_ASSERT(*map.get(69) == "69");
+    TEST_ASSERT(*map.get(90) == "90");
+
+    //TEST_CASE("Accessing a random key should give a nullptr back");
+
+    TEST_ASSERT(map.get(666) == nullptr);
+
+    //TEST_CASE("Putting an entry when the map is full sould return false and the key should not exist");
+
+    TEST_ASSERT(!map.put(666, "fail"));
+    TEST_ASSERT(!map.has(666));
 }
 
 void test_serialization_deserialization()
@@ -68,9 +89,9 @@ void test_stream_read_write()
     std::stringstream strm;
     strm << data;
     strm.seekg(std::ios::beg);
-    IoStreamProxy strmp(*(dynamic_cast<std::basic_iostream<char> *>(&strm)));
+    IoStreamProxy strmp(strm);
 
-    SerialMap<std::string, 10> parsed_s = SerialMap<std::string, 10>::fromStream(*(dynamic_cast<Stream *>(&strmp)), 3000);
+    SerialMap<std::string, 10> parsed_s = SerialMap<std::string, 10>::fromStream(strmp, 3000);
 
     TEST_ASSERT(parsed_s.has("will"));
     TEST_ASSERT(parsed_s.has("truly"));
@@ -87,11 +108,11 @@ void test_stream_read_write()
 
     std::stringstream strm_;
     strm_.seekp(std::ios::beg);
-    IoStreamProxy strmp_(*(dynamic_cast<std::basic_iostream<char> *>(&strm_)));
+    IoStreamProxy strmp_(strm_);
 
     ////TEST_CASE("SerialMap serialization of { \"key\": \"value\" } to a stream");
 
-    map_.write(*(dynamic_cast<Stream *>(&strmp_)));
+    map_.write(strmp_);
 
     strm_.seekg(std::ios::beg);
     strm_.read(buffer_, 512);
@@ -100,55 +121,6 @@ void test_stream_read_write()
     TEST_ASSERT(std::equal(buffer_, buffer_ + res_, good_));
 
     TEST_ASSERT(res_ == sizeof(good_));
-}
-
-void test_map()
-{
-    Map<int, std::string, 3> map;
-
-    ////TEST_CASE("Should succeed setting the entries when below the size limit");
-
-    TEST_ASSERT(map.put(45, "45"));
-    TEST_ASSERT(map.put(69, "69"));
-    TEST_ASSERT(map.put(90, "90"));
-
-    ////TEST_CASE("Map should contain the saved entries");
-
-    TEST_ASSERT(map.has(45));
-    TEST_ASSERT(map.has(69));
-    TEST_ASSERT(map.has(90));
-
-    ////TEST_CASE("Map should not contain other random stuff")
-
-    TEST_ASSERT(!map.has(666));
-    TEST_ASSERT(!map.has(123));
-    TEST_ASSERT(!map.has(6969));
-
-    ////TEST_CASE("Map values should match the ones set previously");
-
-    TEST_ASSERT(*map.get(45) == "45");
-    TEST_ASSERT(*map.get(69) == "69");
-    TEST_ASSERT(*map.get(90) == "90");
-
-    //TEST_CASE("Accessing a random key should give a nullptr back");
-
-    TEST_ASSERT(map.get(666) == nullptr);
-
-    //TEST_CASE("Putting an entry when the map is full sould return false and the key should not exist");
-
-    TEST_ASSERT(!map.put(666, "fail"));
-    TEST_ASSERT(!map.has(666));
-}
-
-void fillWithRandom(char *buffer, size_t size)
-{
-    std::random_device rd;
-    std::uniform_int_distribution<int> dist(0, 0xFF);
-
-    for (size_t i = 0; i < size; i++)
-    {
-        buffer[i] = dist(rd);
-    }
 }
 
 void test_errors()
@@ -197,4 +169,15 @@ void test_errors()
     // Failure rate, with random data, is around 0.003 % which is not that good
     // For the purposes it is being used, though, the probability of a collision with the keys used by the protocol
     // is very low. Additionally, considering the key/value size limit of 256 bytes it's not so bad
+}
+
+void fillWithRandom(char *buffer, size_t size)
+{
+    std::random_device rd;
+    std::uniform_int_distribution<int> dist(0, 0xFF);
+
+    for (size_t i = 0; i < size; i++)
+    {
+        buffer[i] = dist(rd);
+    }
 }

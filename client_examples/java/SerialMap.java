@@ -23,12 +23,10 @@ public class SerialMap {
     public SerialMap(InputStream input) throws IOException {
         DataInputStream dataIs = new DataInputStream(input);
 
-        while (true) {
-            try {
+        try {
+            while (true) {
                 byte b = dataIs.readByte();
-                if (b == '\0') {
-                    break;
-                }
+
                 if (b != KEY_TYPE) {
                     break;
                 }
@@ -50,9 +48,8 @@ public class SerialMap {
                 String value = new String(buffer, StandardCharsets.UTF_8);
 
                 data.put(key, value);
-            } catch (EOFException e) {
-                break;
             }
+        } catch (EOFException e) {
         }
     }
 
