@@ -49,16 +49,17 @@ def main():
 
             auth = SerialMap(
                 values={'username': USER, 'password': PASS})
-            data = auth.serialize()
-            ssocket.send(data)
+
+            ssocket.send(auth.serialize())
 
             response = SerialMap(recv_until(ssocket, b'\x00', TIMEOUT))
 
             if 'result' in response and response['result'] == 'ok':
-                data = action.serialize()
-                ssocket.send(data)
+
+                ssocket.send(action.serialize())
 
                 response = SerialMap(recv_until(ssocket, b'\x00', TIMEOUT))
+
                 print(response)
 
 
