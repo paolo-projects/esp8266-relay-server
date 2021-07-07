@@ -10,7 +10,7 @@ The connection is secured through the use of TLS, by providing a certificate and
 
 It also supports a button for manually switching the relay state, which can be wired to a digital pin and configured into the `Config.h` file.
 
-When in client mode, it broadcasts an UDP packet at a fixed rate to notify the other clients in the network of the service being avaible, so the client can use this feature to auto-discover the service and IP address in the local network.
+When in client mode, it broadcasts an UDP packet at a fixed rate to notify the other clients in the network of the service being available, so the client can use this feature to auto-discover the service and IP address in the local network. Although the code for this feature is not provided in the client examples, implementing it just needs that the client listens on a UDP port and checks that the content of the packet matches. The TLS used for TCP communications, with the certificate check implemented in the client, should prevent connecting to a fake service pretending to be the real one thus adding an additional layer of security.
 
 # Configuration
 
@@ -24,7 +24,7 @@ Can be compiled through Arduino IDE and the proper ESP library, by renaming the 
 
 # The clients
 
-The SerialMap class, which is at the base of the protocol, has been ported into a few programming languages, and you will find a few examples of its usage into the `client_examples` folder. The Java example can be easily put into an Android project.
+The SerialMap class, which is at the base of the protocol, has been ported into a few programming languages, and you will find a few examples of its usage into the [/client_examples](/client_examples) folder. The [Java example](/client_examples/java) can be easily put into an Android project.
 
 # Further developments
 
