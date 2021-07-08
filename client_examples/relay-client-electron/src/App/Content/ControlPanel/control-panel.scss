@@ -1,0 +1,13 @@
+.relay-status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.relay-status-img {
+    width: 80px;
+    margin: 1em;
+    height: auto;
+    object-fit: contain;
+}

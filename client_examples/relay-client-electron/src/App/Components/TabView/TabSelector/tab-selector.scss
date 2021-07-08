@@ -1,0 +1,36 @@
+@import '../../../../theme.scss';
+
+.tabSelector {
+    display: flex;
+    flex-direction: row;
+
+    a {
+        color: $text;
+        text-decoration: none;
+
+        &:first-child > .tabSelector--tab {
+            border-top-left-radius: 6px;
+        }
+
+        &:last-child > .tabSelector--tab {
+            border-top-right-radius: 6px;
+        }
+    }
+}
+
+.tabSelector--tab {
+    border-top: 2px solid $text-dim;
+    border-left: 1px solid $text-dim;
+    border-right: 1px solid $text-dim;
+    padding: 0.5em;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    color: $text-dim;
+
+    transition: color 0.2s ease-out, border 0.2s ease-out;
+
+    &.active {
+        border-color: $text !important;
+        color: $text;
+    }
+}

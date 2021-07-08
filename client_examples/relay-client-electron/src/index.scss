@@ -1,0 +1,30 @@
+@import './theme.scss';
+
+@font-face {
+    font-family: 'Roboto';
+    src: url(../assets/fonts/Roboto-Regular.ttf);
+}
+
+:root {
+    --background: $background;
+    --background-light: $light;
+    --text-color: $text;
+    --text-color-dark: $text-dark;
+    --primary: $primary;
+    --secondary: $secondary;
+    --accent: $accent;
+}
+
+body {
+    background-color: $background;
+    color: $text;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
+    margin: auto;
+    max-width: 38rem;
+    padding: 2rem;
+}
+
+#app-root {
+    height: 100%;
+}

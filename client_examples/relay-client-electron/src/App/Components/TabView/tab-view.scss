@@ -1,0 +1,8 @@
+@import '../../../theme.scss';
+
+.tabContent {
+    height: 100%;
+    border: 2px solid $text;
+    padding: 1em;
+    min-width: fit-content;
+}
