@@ -1,16 +1,11 @@
-class SerialMap {
-    KEY_TYPE = 0x10;
-    VALUE_TYPE = 0x11;
-    /**
-     * @type {[key:string]: string}
-     */
-    data = {};
+export type DataObject = { [key: string]: string };
 
-    /**
-     *
-     * @param {Buffer} data
-     */
-    constructor(data = null) {
+export default class SerialMap {
+    private KEY_TYPE = 0x10;
+    private VALUE_TYPE = 0x11;
+    private data: DataObject = {};
+
+    constructor(data: Buffer | null = null) {
         if (data != null) {
             let cursor = 0;
 
@@ -19,13 +14,13 @@ class SerialMap {
                     return;
                 }
                 let sz = data.readUInt8(cursor++);
-                const key = data.slice(cursor, cursor + sz).toString("utf-8");
+                const key = data.slice(cursor, cursor + sz).toString('utf-8');
                 cursor += sz;
                 if (data.readUInt8(cursor++) != this.VALUE_TYPE) {
                     return;
                 }
                 sz = data.readUInt8(cursor++);
-                const value = data.slice(cursor, cursor + sz).toString("utf-8");
+                const value = data.slice(cursor, cursor + sz).toString('utf-8');
                 cursor += sz;
 
                 this.data[key] = value;
@@ -33,37 +28,19 @@ class SerialMap {
         }
     }
 
-    /**
-     *
-     * @param {string} key
-     * @param {string} value
-     */
-    put(key, value) {
+    put(key: string, value: string) {
         this.data[key] = value;
     }
 
-    /**
-     *
-     * @param {string} key
-     * @returns {string} The value
-     */
-    get(key) {
+    get(key: string): string {
         return this.data[key];
     }
 
-    /**
-     *
-     * @param {string} key
-     * @returns {boolean} If the key exists
-     */
-    has(key) {
+    has(key: string): boolean {
         return key in this.data;
     }
 
-    /**
-     * @returns {Buffer} The serialized buffer
-     */
-    serialize() {
+    serialize(): Buffer {
         let size = 1;
         for (const [key, value] of Object.entries(this.data)) {
             size += key.length + value.length + 4;
@@ -74,10 +51,10 @@ class SerialMap {
         for (const [key, value] of Object.entries(this.data)) {
             cursor = buf.writeUInt8(this.KEY_TYPE, cursor);
             cursor = buf.writeUInt8(key.length, cursor);
-            cursor += buf.write(key, cursor, "utf8");
+            cursor += buf.write(key, cursor, 'utf8');
             cursor = buf.writeUInt8(this.VALUE_TYPE, cursor);
             cursor = buf.writeUInt8(value.length, cursor);
-            cursor += buf.write(value, cursor, "utf8");
+            cursor += buf.write(value, cursor, 'utf8');
         }
 
         cursor = buf.writeUInt8(0, cursor);
@@ -85,5 +62,3 @@ class SerialMap {
         return buf;
     }
 }
-
-module.exports = SerialMap;

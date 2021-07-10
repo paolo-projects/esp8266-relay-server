@@ -76,9 +76,13 @@
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.6",
     "electron": "13.1.6",
+    "eslint": "^7.30.0",
+    "eslint-plugin-react": "^7.24.0",
     "file-loader": "^6.2.0",
     "node-loader": "^2.0.0",
     "sass": "^1.35.2",
@@ -89,9 +93,15 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@emotion/babel-plugin": "^11.3.0",
+    "bootstrap": "^5.0.2",
     "clsx": "^1.1.1",
+    "dotenv": "^10.0.0",
     "electron-squirrel-startup": "^1.0.0",
+    "node-wifi": "^2.0.14",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-spinners": "^0.11.0",
+    "rxjs": "^7.2.0"
   }
 }

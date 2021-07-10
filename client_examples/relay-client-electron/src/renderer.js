@@ -26,12 +26,12 @@
  * ```
  */
 
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App/app";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App/app';
 
-import "./index.scss";
+import './index.scss';
 
-ReactDOM.render(<App />, document.getElementById("app-root"), () => {
-    console.log("React is on!");
+ReactDOM.render(<App />, document.getElementById('app-root'), () => {
+    console.log('React is on!');
 });

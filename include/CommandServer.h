@@ -41,7 +41,7 @@ private:
   bool serverRunning = true;
   char outBuffer[512] = {};
 
-  static constexpr uint8_t UDPBcastPacket[32] = UDP_BROADCAST_PACKET;
+  static constexpr char UDPBcastPacket[32] = UDP_BROADCAST_PACKET;
 };
 
 #endif

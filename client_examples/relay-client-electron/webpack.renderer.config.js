@@ -22,6 +22,7 @@ rules = [
                         '@babel/preset-react',
                         '@babel/preset-typescript',
                     ],
+                    plugins: ['@emotion'],
                 },
             },
         },

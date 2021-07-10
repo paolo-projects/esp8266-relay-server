@@ -1,4 +1,5 @@
 @import './theme.scss';
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
 
 @font-face {
     font-family: 'Roboto';
@@ -26,5 +27,11 @@ body {
 }
 
 #app-root {
-    height: 100%;
+    height: 400px;
 }
+/*
+input {
+    background-color: $background !important;
+    color: $text !important;
+}
+*/

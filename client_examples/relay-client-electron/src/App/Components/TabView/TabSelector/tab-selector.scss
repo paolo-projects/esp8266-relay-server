@@ -19,18 +19,23 @@
 }
 
 .tabSelector--tab {
-    border-top: 2px solid $text-dim;
-    border-left: 1px solid $text-dim;
-    border-right: 1px solid $text-dim;
+    border-top: 2px solid $tab-border-dim;
+    border-left: 1px solid $tab-border-dim;
+    border-right: 1px solid $tab-border-dim;
     padding: 0.5em;
     font-size: 18px;
     letter-spacing: 0.05em;
     color: $text-dim;
 
-    transition: color 0.2s ease-out, border 0.2s ease-out;
+    transition: color 0.2s ease-out, border 0.2s ease-out,
+        background-color 0.2s ease-out;
+
+    &:hover {
+        background-color: $tab-highlight;
+    }
 
     &.active {
-        border-color: $text !important;
+        border-color: $tab-border !important;
         color: $text;
     }
 }

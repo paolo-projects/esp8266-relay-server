@@ -24,12 +24,12 @@ void AccessPointOperations::startServer()
     BearSSL::WiFiServerSecure server(AP_SERVER_PORT);
 
     // Attach the server private cert/key combo
-    BearSSL::X509List *serverCertList = new BearSSL::X509List(SERVER_CERT);
-    BearSSL::PrivateKey *serverPrivKey = new BearSSL::PrivateKey(SERVER_KEY);
+    BearSSL::X509List serverCertList = BearSSL::X509List(SERVER_CERT);
+    BearSSL::PrivateKey serverPrivKey = BearSSL::PrivateKey(SERVER_KEY);
 
-    server.setRSACert(serverCertList, serverPrivKey);
+    server.setRSACert(&serverCertList, &serverPrivKey);
 
-    server.begin();
+    server.begin(AP_SERVER_PORT);
 
     while (serverRunning)
     {

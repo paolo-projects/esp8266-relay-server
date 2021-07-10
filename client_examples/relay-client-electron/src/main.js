@@ -1,6 +1,14 @@
-const { app, BrowserWindow, nativeTheme } = require('electron');
+/*const { app, BrowserWindow, nativeTheme } = require('electron');
 const path = require('path');
-const { handleIpc } = require('/src/ipc');
+const { handleIpc } = require('./ipc');
+const dotenv = require('dotenv');*/
+
+import dotenv from 'dotenv';
+import { app, BrowserWindow, nativeTheme } from 'electron';
+import path from 'path';
+import { handleIpc } from '/src/ipc.ts';
+
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -13,6 +21,10 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        resizable: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
     });
 
     mainWindow.setIcon(path.join(__dirname, '../assets/appicon.png'));
@@ -23,8 +35,10 @@ const createWindow = () => {
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    if (process.env.NODE_ENV === 'development') {
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools();
+    }
 
     handleIpc();
 };

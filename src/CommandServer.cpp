@@ -1,6 +1,6 @@
 #include "CommandServer.h"
 
-constexpr uint8_t CommandServer::UDPBcastPacket[];
+constexpr char CommandServer::UDPBcastPacket[];
 
 CommandServer::CommandServer(StateManager &stateManager, RelayManager &relayManager, std::function<void(void)> manualOverride)
     : stateManager(stateManager), relayManager(relayManager), manualOverride(manualOverride), authHandler(AUTHENTICATION_USERNAME, AUTHENTICATION_PASSWORD)
