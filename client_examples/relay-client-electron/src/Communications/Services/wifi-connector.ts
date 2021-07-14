@@ -1,63 +1,26 @@
-import wifi from 'node-wifi';
-import Communications, { Action, Result } from './protocol';
+import AppConfig from '../../Config/configuration';
+import Communications from './protocol';
 
-/**
- * @typedef
- */
 export type WifiParams = { ssid: string; password: string };
 
 export default class WifiSettings {
-    constructor() {
-        wifi.init({ iface: null });
-    }
-
-    /**
-     *
-     * @param {WifiParams} settings
-     * @returns {Promise}
-     */
     send(settings: WifiParams) {
-        // This library requires the Wifi to not be hidden
-        // because it first scans the available networks and then connects
-        // only if it finds the given one
-        //
-        // Instead of searching for an alterative or modifying the library,
-        // I just changed the wifi from hidden to publicly accessible as it's
-        // still secured by WPA
-        console.log('wifi settings', settings);
-
-        return wifi
-            .connect({
-                ssid: process.env.AP_SSID,
-                password: process.env.AP_PASS,
-            })
-            .then(() => {
-                console.log('connected. sending data');
-                return this.connectionCallback({
-                    ...settings,
-                    action: 'setwifi',
-                });
-            })
-            .then((result: void | Result) => {
-                wifi.disconnect();
-                return result;
-            });
-    }
-
-    /**
-     *
-     * @param {WifiParams} settings
-     */
-    connectionCallback(settings: Action): Promise<void | Result> {
-        console.log('opening connection');
+        // The automatic WiFi connection to the AP endpoint is not easy to implement using nodeJS,
+        // requiring executing shell commands that are OS dependent and often require admin/root
+        // privileges. An alternative would be calling the OS APIs directly, but it's a lot of
+        // cross-platform work, not suited for nodejs, and admin/root privileges are still required
+        // The solution is to make the user manually connect to the AP wifi and we only send the command
 
         const comms = new Communications({
-            host: process.env.AP_IP_ADDR || '',
-            port: Number(process.env.AP_SERVER_PORT) || 0,
-            username: process.env.AP_AUTH_USER || '',
-            password: process.env.AP_AUTH_PASS || '',
+            host: AppConfig.apIpAddr,
+            port: AppConfig.apServerPort,
+            username: AppConfig.apAuthUser,
+            password: AppConfig.apAuthPass,
         });
 
-        return comms.request(settings);
+        return comms.request({
+            ...settings,
+            action: 'setwifi',
+        });
     }
 }

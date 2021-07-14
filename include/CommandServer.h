@@ -29,7 +29,7 @@ private:
   std::function<void(void)> manualOverride;
   AuthenticationHandler authHandler;
   ActionParser<10> actionParser;
-  //bool authHandler(BearSSL::WiFiClientSecure &client);
+
   void udpBroadcast();
   void shutDown(ActionMap &action, Stream &output);
   void getState(ActionMap &action, Stream &output);

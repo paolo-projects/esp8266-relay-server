@@ -3,7 +3,8 @@
 constexpr char CommandServer::UDPBcastPacket[];
 
 CommandServer::CommandServer(StateManager &stateManager, RelayManager &relayManager, std::function<void(void)> manualOverride)
-    : stateManager(stateManager), relayManager(relayManager), manualOverride(manualOverride), authHandler(AUTHENTICATION_USERNAME, AUTHENTICATION_PASSWORD)
+    : stateManager(stateManager), relayManager(relayManager), manualOverride(manualOverride),
+      authHandler(AUTHENTICATION_USERNAME, AUTHENTICATION_PASSWORD)
 {
     actionParser
         .with("disconnect", CALLBACK(CommandServer, shutDown))
@@ -15,11 +16,7 @@ void CommandServer::startServer()
 {
     BearSSL::WiFiServerSecure server(SERVER_PORT);
 
-    // Attach the server private cert/key combo
-    BearSSL::X509List *serverCertList = new BearSSL::X509List(SERVER_CERT);
-    BearSSL::PrivateKey *serverPrivKey = new BearSSL::PrivateKey(SERVER_KEY);
-
-    server.setRSACert(serverCertList, serverPrivKey);
+    server.setRSACert(&Certificate::serverCert, &Certificate::serverPrivateKey);
 
     server.begin();
     udp.begin(UDP_BROADCAST_RATE);
@@ -38,6 +35,7 @@ void CommandServer::startServer()
 
             if (authHandler.authenticate(client))
             {
+                Serial.println("Authentication OK");
                 ActionMap action = ActionMap::fromStream(client, TIMEOUT);
                 actionParser.execute(action, client);
             }

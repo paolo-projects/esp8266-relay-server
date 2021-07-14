@@ -33,9 +33,8 @@ public:
      */
     static SerialMap fromStream(Stream &stream, int timeout)
     {
-        int bufSz = 1024;
         int read = 0;
-        char *buffer = (char *)malloc(bufSz);
+        char buffer[512];
 
         unsigned long start = millis();
 
@@ -44,33 +43,13 @@ public:
 
         while (stream.available() > 0)
         {
-            int r = stream.readBytesUntil('\0', buffer, bufSz);
-            read += r;
-
-            if (read != bufSz)
-            {
-                break;
-            }
-
-            if (read >= bufSz)
-            {
-                if (bufSz >= BUFFER_LIMIT)
-                {
-                    break;
-                }
-                bufSz += 1024;
-                buffer = (char *)realloc(buffer, bufSz);
-            }
+            read += stream.readBytesUntil('\0', buffer + read, 1024 - read);
         }
 
-        Serial.print("Buffer size: ");
-        Serial.print(bufSz);
         Serial.print(" Read chars: ");
         Serial.println(read);
 
         SerialMap result(buffer, read);
-
-        free(buffer);
 
         return result;
     }

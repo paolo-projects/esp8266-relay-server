@@ -3,7 +3,7 @@ import { Tab } from '../../../Models/Tab';
 import './tab-selector.scss';
 import clsx from 'clsx';
 
-export type TabCallback = (tabName: string) => void;
+export type TabCallback = (tabId: string) => void;
 
 export default function TabSelector({
     tabs,
@@ -14,7 +14,7 @@ export default function TabSelector({
     selectedTab: string;
     tabClick: TabCallback;
 }) {
-    const onTabClick = (name: string) => tabClick(name);
+    const onTabClick = (id: string) => tabClick(id);
 
     return (
         <div className="tabSelector">
@@ -22,13 +22,13 @@ export default function TabSelector({
                 <a
                     href="#"
                     role="button"
-                    onClick={() => onTabClick(tab.name)}
+                    onClick={() => onTabClick(tab.id)}
                     key={i}
                 >
                     <div
                         className={clsx(
                             'tabSelector--tab',
-                            tab.name === selectedTab ? 'active' : ''
+                            tab.id === selectedTab ? 'active' : ''
                         )}
                     >
                         {tab.name}

@@ -15,7 +15,7 @@ export default function TabView({
     initialSelection?: string;
 }) {
     const [selectedTab, setSelectedTab] = useState(
-        initialSelection || tabs[0].name
+        initialSelection || tabs[0].id
     );
 
     // If the direct child is not a TabContent item, it's probably a wrapper
@@ -35,22 +35,22 @@ export default function TabView({
             if (nodeObj.type.isTabContent) {
                 return {
                     ...obj,
-                    [nodeObj.props.tabName]: node,
+                    [nodeObj.props.tabId]: node,
                 };
             } else return obj;
         },
         {}
     );
 
-    const tabChanged = (name: string) => {
-        setSelectedTab(name);
+    const tabChanged = (id: string) => {
+        setSelectedTab(id);
     };
 
     return (
         <>
             <TabSelector
                 tabs={tabs}
-                tabClick={(name) => tabChanged(name)}
+                tabClick={(id) => tabChanged(id)}
                 selectedTab={selectedTab}
             />
             <div className="tabContent">{content[selectedTab]}</div>

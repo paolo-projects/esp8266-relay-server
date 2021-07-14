@@ -2,10 +2,10 @@ import React from 'react';
 
 export default function TabContent({
     children,
-    tabName,
+    tabId,
 }: {
     children: React.ReactNode | React.ReactNode[];
-    tabName: string;
+    tabId: string;
 }) {
     return <>{children}</>;
 }

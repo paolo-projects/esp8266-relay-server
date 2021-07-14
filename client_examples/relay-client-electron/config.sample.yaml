@@ -1,0 +1,9 @@
+udp_packet:
+ap_ip_address:
+ap_server_port:
+ap_auth_user:
+ap_auth_password:
+server_port:
+server_user:
+server_password:
+udp_port:

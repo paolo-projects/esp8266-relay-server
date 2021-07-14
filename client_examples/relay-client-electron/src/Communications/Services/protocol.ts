@@ -50,7 +50,7 @@ export default class Communications {
     }
 
     request(action: Action): Promise<Result | void> {
-        if (this._address !== null) {
+        if (this._address) {
             return new Promise((resolve, reject) => {
                 this._parser = new DataParser();
                 this._statusManager = new StatusManager();

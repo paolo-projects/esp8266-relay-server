@@ -107,7 +107,7 @@ bool startAccessPoint()
   result = WiFi.softAP(AP_SSID, AP_PASS, AP_CHANNEL, AP_HIDDEN, AP_MAX_CONN);
   if (!result)
   {
-    Serial.println("Error start soft AP mode");
+    Serial.println("Error starting soft AP mode");
     return false;
   }
   Serial.print("Soft AP started with SSID: ");
@@ -148,11 +148,7 @@ void connectedCallback()
 
 void apModeCallback()
 {
-  bool result = false;
-  while ((result = startAccessPoint()) == false)
-  {
-    manualOverride();
-    delay(150);
-  }
+  startAccessPoint();
   accessPoint.startServer();
+  delay(150);
 }

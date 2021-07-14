@@ -29,6 +29,27 @@ body {
 #app-root {
     height: 400px;
 }
+
+::-webkit-scrollbar {
+    width: 25px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #333333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #444444;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
 /*
 input {
     background-color: $background !important;

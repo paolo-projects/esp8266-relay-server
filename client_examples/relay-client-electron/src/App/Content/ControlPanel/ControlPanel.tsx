@@ -7,61 +7,44 @@ import oven_undef from '../../../../assets/oven_undef.svg';
 import { CHANNEL_REQUEST_STATE, CHANNEL_SET_STATE } from '../../../channels';
 import { State } from '../../Models/State';
 import useIpc from '../../Hooks/use-ipc';
-import { Subscription } from 'rxjs';
 import { StateResult } from '../../../Communications/Services/protocol';
 import { ClipLoader } from 'react-spinners';
 
 const INTERVAL = 10000;
 
-type RelayStatusEnum = keyof typeof RelayStatus;
-
 export default function ControlPanel() {
     const [relayStatus, setRelayStatus] = useState(RelayStatus.UNKNOWN);
-    const [statusPoll, setStatusPoll]: [number | null, Function] =
-        useState(null);
     const [awaitingStatus, setAwaitingStatus] = useState(true);
-    const [requestedNewStatus, setRequestedNewStatus]: [
-        RelayStatus | null,
-        Function
-    ] = useState(null);
 
     const ipc = useIpc();
 
     useEffect(() => {
-        //setStatusPoll(setInterval(() => pollForStatus(), INTERVAL));
-        setStatusPoll(setTimeout(() => pollForStatus(), INTERVAL));
-        pollForStatus();
+        function pollForStatus() {
+            setAwaitingStatus(true);
+            ipc.invoke(CHANNEL_REQUEST_STATE)
+                .then((state: StateResult) => {
+                    updateState(state);
+                })
+                .catch((err) => {
+                    console.error('Error occurred during request', err);
+                })
+                .finally(() => {
+                    if (!destroying) {
+                        setAwaitingStatus(false);
+                        timer = setTimeout(() => pollForStatus(), INTERVAL);
+                    }
+                });
+        }
 
-        let subscription: Subscription;
+        //setStatusPoll(setInterval(() => pollForStatus(), INTERVAL));
+        let timer = setTimeout(() => pollForStatus(), 0);
+        let destroying = false;
 
         return () => {
-            if (statusPoll) {
-                clearTimeout(statusPoll);
-                setStatusPoll(null);
-            }
-            if (subscription) {
-                subscription.unsubscribe();
-            }
+            destroying = true;
+            clearTimeout(timer);
         };
     }, []);
-
-    const pollForStatus = () => {
-        ipc.invoke(CHANNEL_REQUEST_STATE).then((state: StateResult) => {
-            updateState(state);
-            if (
-                awaitingStatus === true &&
-                (requestedNewStatus === null ||
-                    requestedNewStatus ===
-                        (state.state === 'on'
-                            ? RelayStatus.ON
-                            : RelayStatus.OFF))
-            ) {
-                setAwaitingStatus(false);
-                setRequestedNewStatus(null);
-                setStatusPoll(setTimeout(() => pollForStatus(), INTERVAL));
-            }
-        });
-    };
 
     const updateState = (state: State) => {
         switch (state.state) {
@@ -102,9 +85,6 @@ export default function ControlPanel() {
     };
 
     const changeStateClick = () => {
-        setRequestedNewStatus(
-            relayStatus === RelayStatus.OFF ? RelayStatus.ON : RelayStatus.OFF
-        );
         setAwaitingStatus(true);
 
         if (relayStatus !== RelayStatus.UNKNOWN) {

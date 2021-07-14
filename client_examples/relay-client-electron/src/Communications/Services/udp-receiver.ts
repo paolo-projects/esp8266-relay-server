@@ -1,17 +1,20 @@
 import dgram from 'dgram';
 import { Subject } from 'rxjs';
+import AppConfig from '../../Config/configuration';
 
 export default class UDPBroadcastReceiver {
     address = new Subject<string>();
     port: number;
     listener: dgram.Socket;
+    message: Buffer;
 
     constructor(port: number, closeWhenDone = true) {
         this.port = port;
         this.listener = dgram.createSocket('udp4');
+        this.message = AppConfig.udpPacket;
 
         this.listener.on('message', (msg, rinfo) => {
-            if (msg.toString('utf8') === process.env.UDP_PACKET) {
+            if (msg.equals(this.message)) {
                 this.address.next(rinfo.address);
                 if (closeWhenDone) {
                     this.listener.close();

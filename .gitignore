@@ -8,3 +8,4 @@ src/key
 Config.java
 __pycache__
 node_modules
+config.default.yaml

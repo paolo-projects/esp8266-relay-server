@@ -6,6 +6,8 @@ const CHANNELS_ALLOWED = [
     'relayserver_reset_device',
     'relayserver_set_wifi_options',
     'relayserver_renderer_state_received',
+    'relayserver_get_configuration',
+    'relayserver_save_configuration',
 ];
 
 contextBridge.exposeInMainWorld('api', {

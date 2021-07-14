@@ -3,3 +3,4 @@ declare module '*.jpeg';
 declare module '*.svg';
 declare module '*.png';
 declare module '*.pem';
+declare module '*.yaml';

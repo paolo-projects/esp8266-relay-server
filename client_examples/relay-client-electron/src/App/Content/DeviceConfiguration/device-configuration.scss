@@ -3,3 +3,9 @@
     padding: 1em;
     text-align: center;
 }
+
+.configuration-container {
+    overflow-y: scroll;
+    max-height: 100%;
+    padding: 0.5em;
+}

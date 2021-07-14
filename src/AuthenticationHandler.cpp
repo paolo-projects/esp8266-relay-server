@@ -13,11 +13,12 @@ bool AuthenticationHandler::authenticate(Stream &client)
 	ActionMap authentication = ActionMap::fromStream(client, TIMEOUT);
 
 	if (authentication.has("username") &&
-		authentication.has("password"))
+		authentication.has("password") &&
+		(*authentication.get("username")) == this->username && (*authentication.get("password")) == this->password)
 	{
 		Response::successResponse().write(client);
 
-		return *authentication.get("username") == this->username && *authentication.get("password") == this->password;
+		return true;
 	}
 
 	Response::errorResponse().write(client);

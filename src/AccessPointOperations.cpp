@@ -9,25 +9,11 @@ AccessPointOperations::AccessPointOperations(
     actionParser.with("setwifi", CALLBACK(AccessPointOperations, setWifiPassword));
 }
 
-/*
- * Format:
- * PI<length of username: uint8_t><length of pass: uint8_t><AUTH USER><AUTH
- * PASS> then PI<length of ssid: uint8_t><length of wifi pass:
- * uint8_t><SSID><WIFI PASS>
- *
- * responses:
- * PIOK
- */
-
 void AccessPointOperations::startServer()
 {
     BearSSL::WiFiServerSecure server(AP_SERVER_PORT);
 
-    // Attach the server private cert/key combo
-    BearSSL::X509List serverCertList = BearSSL::X509List(SERVER_CERT);
-    BearSSL::PrivateKey serverPrivKey = BearSSL::PrivateKey(SERVER_KEY);
-
-    server.setRSACert(&serverCertList, &serverPrivKey);
+    server.setRSACert(&Certificate::serverCert, &Certificate::serverPrivateKey);
 
     server.begin(AP_SERVER_PORT);
 
@@ -78,5 +64,8 @@ void AccessPointOperations::setWifiPassword(ActionMap &action, Stream &output)
     {
         configuration.updateConfig(*action.get("bssid"), *action.get("password"));
         serverRunning = false;
+        stateManager.setState(CONNECTING);
+
+        Response::successResponse().write(output);
     }
 }

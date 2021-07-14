@@ -19,7 +19,7 @@ module.exports = {
                     },
                 },
                 {
-                    test: /\.pem$/i,
+                    test: /\.pem$|\.yaml/i,
                     use: { loader: 'file-loader' },
                 },
             ],

@@ -1,6 +1,9 @@
 import React, { FormEvent, useState } from 'react';
 import { ClipLoader } from 'react-spinners';
-import { CHANNEL_SET_WIFI_OPTIONS } from '../../../channels';
+import {
+    CHANNEL_RESET_DEVICE,
+    CHANNEL_SET_WIFI_OPTIONS,
+} from '../../../channels';
 import useIpc from '../../Hooks/use-ipc';
 import './device-configuration.scss';
 
@@ -28,9 +31,18 @@ export default function DeviceConfiguration() {
             });
     };
 
+    const setToAp = () => {
+        setSubmitting(true);
+        ipc.invoke(CHANNEL_RESET_DEVICE).finally(() => setSubmitting(false));
+    };
+
     return (
-        <>
-            <button className="btn btn-primary" disabled={submitting}>
+        <div className="configuration-container">
+            <button
+                className="btn btn-primary"
+                disabled={submitting}
+                onClick={() => setToAp()}
+            >
                 Set to AP
             </button>
             <hr />
@@ -67,9 +79,24 @@ export default function DeviceConfiguration() {
                         Set device Wifi
                     </button>
                 </div>
+                <div className="loading-spinner">
+                    <ClipLoader color="#ffffff" loading={submitting} />
+                </div>
                 <div>
                     <small className="text-muted">
-                        You need a WiFi card to connect to the device
+                        <h6 className="mt-2">Instructions</h6>
+                        <p>
+                            First, you need to make sure your device is in AP
+                            mode, then connect to your device WiFi through your
+                            OS configuration panel. If you set the WiFi hidden
+                            in the firmware configuration, you have to enter the
+                            SSID and password manually.
+                        </p>
+                        <p>
+                            After this step, you can type the SSID and password
+                            into the field up here and send the new
+                            configuration.
+                        </p>
                     </small>
                 </div>
                 <div>
@@ -78,10 +105,7 @@ export default function DeviceConfiguration() {
                 <div>
                     <small className="text-success">{success}</small>
                 </div>
-                <div className="loading-spinner">
-                    <ClipLoader color="#ffffff" loading={submitting} />
-                </div>
             </form>
-        </>
+        </div>
     );
 }

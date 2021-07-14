@@ -1,14 +1,6 @@
-/*const { app, BrowserWindow, nativeTheme } = require('electron');
-const path = require('path');
-const { handleIpc } = require('./ipc');
-const dotenv = require('dotenv');*/
-
-import dotenv from 'dotenv';
 import { app, BrowserWindow, nativeTheme } from 'electron';
 import path from 'path';
 import { handleIpc } from '/src/ipc.ts';
-
-dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
