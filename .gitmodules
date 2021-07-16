@@ -1,0 +1,3 @@
+[submodule "lib/remote-control-server"]
+	path = lib/remote-control-server
+	url = https://github.com/paolo-projects/remote-control-server

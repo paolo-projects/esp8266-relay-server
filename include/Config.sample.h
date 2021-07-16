@@ -18,7 +18,7 @@
 #define LED_PIN_ON HIGH
 #define LED_PIN_OFF LOW
 
-// Timeout after which the device switched to AP mode if connection fails
+// Timeout after which the device switches to AP mode if connection to WiFi fails
 #define WLAN_CONN_TIMEOUT 15 // Seconds
 #define WLAN_HOSTNAME "whcontrol.local"
 
@@ -51,12 +51,7 @@
 // The packet broadcasted through UDP to notify clients of the server being available
 // You can put any kind of data here, a string, random bytes, and the client should identify
 // the server from this packet
-#define UDP_BROADCAST_PACKET                                                                    \
-    {                                                                                           \
-        0x0d, 0x2e, 0x82, 0xdf, 0xfd, 0xf7, 0x4f, 0x4a, 0x0d, 0x6d, 0xd8, 0x8a, 0xc1, 0xb2,     \
-            0x8c, 0x9e, 0x4c, 0x28, 0x84, 0xa3, 0x19, 0x18, 0x58, 0xc9, 0xcd, 0x91, 0x98, 0x58, \
-            0xc2, 0xdc, 0x45, 0xc4                                                              \
-    }
+#define UDP_BROADCAST_PACKET "\x0d\x2e\x82\xdf\xfd\xf7\x4f\x4a\x0d\x6d\xd8\x8a\xc1\xb2\x8c\x9e\x4c\x28\x84\xa3\x19\x18\x58\xc9\xcd\x91\x98\x58\xc2\xdc\x45\xc4"
 
 // The main server authentication
 #define AUTHENTICATION_USERNAME <THE CLIENT MODE USERNAME HERE>

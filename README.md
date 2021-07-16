@@ -12,6 +12,10 @@ It also supports a button for manually switching the relay state, which can be w
 
 When in client mode, it broadcasts an UDP packet at a fixed rate to notify the other clients in the network of the service being available, so the client can use this feature to auto-discover the service and IP address in the local network. Although the code for this feature is not provided in the client examples, implementing it just needs that the client listens on a UDP port and checks that the content of the packet matches. The TLS used for TCP communications, with the certificate check implemented in the client, should prevent connecting to a fake service pretending to be the real one thus adding an additional layer of security.
 
+# Dependencies
+
+The Server code has been refactored and placed into an external library dependency. To clone the repository with the needed library you just need to add the `--recursive` options.
+
 # Configuration
 
 All the configuration parameters such as button, led, relay pins, wifi ap configuration, ssid, users and passwords are defined in the `Config.h` file.
@@ -20,7 +24,7 @@ The TLS certificate and key have to be defined in the `Cert.h` file.
 
 A `Cert.sample.h` and a `Config.sample.h` are provided, into which you have to put your own configuration and rename the files to `Cert.h` and `Config.h` when done.
 
-Can be compiled through Arduino IDE and the proper ESP library, by renaming the `relay_controller.cpp` to `relay_controller.ino` and fixing the imports, or through PlatformIO natively.
+Can be compiled natively through VSCode and the Platform.io extension, which makes configuration, testing and project maintenance easy.
 
 # The clients
 
